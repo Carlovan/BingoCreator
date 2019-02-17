@@ -1,4 +1,4 @@
-package bingo;
+package bingocreator;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -13,6 +13,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableModel;
+
+import bingo.BingoCardsFactory;
+import bingo.BingoCardsFactoryImpl;
 
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
@@ -50,7 +53,11 @@ public class GUI extends JFrame {
 	 * @return A component suitable to show cards' data
 	 */
 	private JComponent createCardsTable() {
-		final TableModel cardsModel = new BingoCardsTableModel();
+		// TODO this is only a test
+		final BingoCardsFactory fact = new BingoCardsFactoryImpl();
+		fact.setCardsCount(10);
+		fact.setCardsInCarnet(5);
+		final TableModel cardsModel = new BingoCardsTableModel(fact.generateCards());
 
 		final JTable cardsTable = new JTable(cardsModel);
 		final JScrollPane tablePane = new JScrollPane(cardsTable);
