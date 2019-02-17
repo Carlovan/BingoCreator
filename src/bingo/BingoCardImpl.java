@@ -18,7 +18,10 @@ public class BingoCardImpl implements BingoCard {
 		this.carnetID = carnetID;
 
 		final Random rand = new Random();
-		this.values = Stream.generate(() -> rand.nextInt(DEFAULT_MAX_VALUE) + DEFAULT_MIN_VALUE).limit(valuesCount)
+		this.values = Stream.generate(() -> rand.nextInt(DEFAULT_MAX_VALUE) + DEFAULT_MIN_VALUE)
+				.distinct()
+				.limit(valuesCount)
+				.sorted()
 				.collect(Collectors.toList());
 	}
 
