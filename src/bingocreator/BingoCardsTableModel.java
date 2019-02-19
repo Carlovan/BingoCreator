@@ -1,7 +1,11 @@
 package bingocreator;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
@@ -12,10 +16,26 @@ import bingo.BingoCard;
  */
 public class BingoCardsTableModel implements TableModel {
 	private final String[] colNames = new String[] { "Stampa", "Cartella", "Carnet" };
-	private final List<BingoCard> cards;
+	private List<BingoCard> cards;
+	private final Set<TableModelListener> listeners = new HashSet<>();
 
 	public BingoCardsTableModel(final List<BingoCard> cards) {
+		this.setData(cards);
+	}
+
+	public BingoCardsTableModel() {
+		this(new ArrayList<BingoCard>());
+	}
+
+	public void setData(final List<BingoCard> cards) {
 		this.cards = cards;
+
+		final TableModelEvent eventRows = new TableModelEvent(this);
+		final TableModelEvent eventCols = new TableModelEvent(this, TableModelEvent.HEADER_ROW);
+		for (final TableModelListener l : this.listeners) {
+			l.tableChanged(eventCols);
+			l.tableChanged(eventRows);
+		}
 	}
 
 	@Override
@@ -37,13 +57,12 @@ public class BingoCardsTableModel implements TableModel {
 		if (col < this.colNames.length) {
 			return this.colNames[col];
 		}
-		return "Num" + (col - this.colNames.length);
+		return "Num:" + (col - this.colNames.length + 1);
 	}
 
 	@Override
 	public void addTableModelListener(final TableModelListener listener) {
-		// TODO Auto-generated method stub
-
+		this.listeners.add(listener);
 	}
 
 	@Override
@@ -62,25 +81,21 @@ public class BingoCardsTableModel implements TableModel {
 
 	@Override
 	public boolean isCellEditable(final int row, final int col) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void removeTableModelListener(final TableModelListener listener) {
-		// TODO Auto-generated method stub
+		this.listeners.remove(listener);
 	}
 
 	@Override
 	public void setValueAt(Object val, int row, int col) {
-		// TODO Auto-generated method stub
+		// Edit is not possible
 	}
 
 	@Override
 	public Class<?> getColumnClass(final int col) {
-		if (col < this.colNames.length) {
-			return String.class;
-		}
 		return Integer.class;
 	}
 }
