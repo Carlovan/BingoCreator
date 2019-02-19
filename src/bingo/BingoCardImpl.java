@@ -45,4 +45,41 @@ public class BingoCardImpl implements BingoCard {
 		return this.carnetID;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		b.append("BingoCard[");
+		b.append(this.getID());
+		b.append(", ");
+		b.append(this.getCarnetID());
+		b.append(", ");
+		b.append(this.getValues().toString());
+		return b.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int hash = 7;
+		hash = prime * hash + this.ID;
+		hash = prime * hash + this.carnetID;
+		hash = prime * hash + this.values.hashCode();
+		return hash;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!this.getClass().equals(o.getClass())) {
+			return false;
+		}
+		final BingoCardImpl other = (BingoCardImpl) o;
+		if (this.ID != other.ID || this.carnetID != other.carnetID || !this.values.equals(other.values)) {
+			return false;
+		}
+		return true;
+	}
+
 }
