@@ -6,11 +6,11 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BingoCardImpl implements BingoCard {
+class BingoCardImpl implements BingoCard {
 	public final static int DEFAULT_MAX_VALUE = 90;
 	public final static int DEFAULT_MIN_VALUE = 1;
-	private final int ID;
-	private final int carnetID;
+	private int ID;
+	private int carnetID;
 	private final List<Integer> values;
 
 	BingoCardImpl(final int ID, final int carnetID, final int valuesCount) {
@@ -23,6 +23,14 @@ public class BingoCardImpl implements BingoCard {
 				.limit(valuesCount)
 				.sorted()
 				.collect(Collectors.toList());
+	}
+
+	public void setID(final int val) {
+		this.ID = val;
+	}
+
+	public void setCarnetID(final int val) {
+		this.carnetID = val;
 	}
 
 	@Override

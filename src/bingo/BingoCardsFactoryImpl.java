@@ -26,10 +26,14 @@ public class BingoCardsFactoryImpl implements BingoCardsFactory {
 
 	@Override
 	public List<BingoCard> generateCards() {
-		return Stream.iterate(DEFAULT_ID_START, id -> id + 1).limit(this.cardsCount)
-				.map(id -> new BingoCardImpl(id, (id - DEFAULT_ID_START) / this.cardsInCarnet + DEFAULT_ID_START,
-						this.valuesCount))
+		final List<BingoCardImpl> cards = Stream.generate(() -> new BingoCardImpl(0, 0, this.valuesCount)).distinct()
+				.limit(this.cardsCount)
 				.collect(Collectors.toList());
+		for (int i = 0; i < cards.size(); i++) {
+			cards.get(i).setID(DEFAULT_ID_START + i);
+			cards.get(i).setCarnetID((i / this.cardsInCarnet) + DEFAULT_ID_START);
+		}
+		return cards.stream().map(x -> (BingoCard) x).collect(Collectors.toList());
 	}
 
 }
