@@ -1,6 +1,7 @@
 package bingocreator;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
@@ -9,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -33,7 +35,8 @@ public class GUI extends JFrame {
 			cardsInCarnet = Integer.parseInt(this.textCardsInCarnet.getText());
 			this.cardsTableModel.setData(logics.generate(cardsCount, cardsInCarnet));
 		} catch (NumberFormatException ex) {
-
+			JOptionPane.showMessageDialog(null, "I valori inseriti non sono validi", "Errore",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -80,6 +83,22 @@ public class GUI extends JFrame {
 		return tablePane;
 	}
 
+	private JComponent createMatrixSettings() {
+		final JPanel container = new JPanel();
+		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+		container.add(new JPlaceholder("CITTÀ DI FORLIMPOPOLI"));
+		container.add(new JPlaceholder("In collaborazione con l'ente flkloristico e culturale forlimpopolese"));
+		container.add(new JPlaceholder("Festeggiamenti"));
+		container.add(new JPlaceholder("SEGAVECCHIA"));
+
+		for(final Component c : container.getComponents()) {
+			// TODO
+		}
+
+		return container;
+	}
+
 	/**
 	 * Builds the GUI
 	 */
@@ -91,6 +110,7 @@ public class GUI extends JFrame {
 		north.add(this.createCountBar(), BorderLayout.NORTH);
 		north.add(this.createCardsTable(), BorderLayout.CENTER);
 		this.getContentPane().add(north, BorderLayout.NORTH);
+		this.getContentPane().add(this.createMatrixSettings(), BorderLayout.CENTER);
 
 		this.setVisible(true);
 	}
