@@ -1,9 +1,12 @@
 package bingocreator;
 
+import java.io.IOException;
 import java.util.List;
 
-import bingo.BingoCard;
+import bingo.print.PrintableBingoCard;
 
 public interface GUILogics {
-	List<BingoCard> generate(int cardsCount, int cardsInCarnet);
+	List<PrintableBingoCard> generate(int cardsCount, int cardsInCarnet);
+	List<PrintableBingoCard> getCards();
+	void savePDF(String filename) throws IOException;
 }

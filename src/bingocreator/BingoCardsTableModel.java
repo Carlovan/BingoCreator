@@ -9,25 +9,25 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import bingo.BingoCard;
+import bingo.print.PrintableBingoCard;
 
 /**
  * A data model to show Bingo Cards
  */
 public class BingoCardsTableModel implements TableModel {
 	private final String[] colNames = new String[] { "Stampa", "Cartella", "Carnet" };
-	private List<BingoCard> cards;
+	private List<PrintableBingoCard> cards;
 	private final Set<TableModelListener> listeners = new HashSet<>();
 
-	public BingoCardsTableModel(final List<BingoCard> cards) {
+	public BingoCardsTableModel(final List<PrintableBingoCard> cards) {
 		this.setData(cards);
 	}
 
 	public BingoCardsTableModel() {
-		this(new ArrayList<BingoCard>());
+		this(new ArrayList<>());
 	}
 
-	public void setData(final List<BingoCard> cards) {
+	public void setData(final List<PrintableBingoCard> cards) {
 		this.cards = cards;
 
 		final TableModelEvent eventRows = new TableModelEvent(this);
@@ -67,9 +67,9 @@ public class BingoCardsTableModel implements TableModel {
 
 	@Override
 	public Object getValueAt(final int row, final int col) {
-		final BingoCard current = this.cards.get(row);
+		final PrintableBingoCard current = this.cards.get(row);
 		if (col == 0) {
-			return 1;
+			return current.getPrintNumber();
 		} else if (col == 1) {
 			return current.getID();
 		} else if (col == 2) {

@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 
 public class JPlaceholder extends JLabel {
+	private static final long serialVersionUID = 3222067926395246516L;
+
 	public JPlaceholder(final String s) {
 		super(s);
 

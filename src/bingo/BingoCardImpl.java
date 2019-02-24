@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class BingoCardImpl implements BingoCard {
+public class BingoCardImpl implements BingoCard {
 	public final static int DEFAULT_MAX_VALUE = 90;
 	public final static int DEFAULT_MIN_VALUE = 1;
 	private int ID;

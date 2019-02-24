@@ -1,9 +1,9 @@
 package bingocreator;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -33,7 +33,8 @@ public class GUI extends JFrame {
 		try {
 			cardsCount = Integer.parseInt(this.textCards.getText());
 			cardsInCarnet = Integer.parseInt(this.textCardsInCarnet.getText());
-			this.cardsTableModel.setData(logics.generate(cardsCount, cardsInCarnet));
+			this.logics.generate(cardsCount, cardsInCarnet);
+			this.cardsTableModel.setData(this.logics.getCards());
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(null, "I valori inseriti non sono validi", "Errore",
 					JOptionPane.ERROR_MESSAGE);
@@ -92,10 +93,6 @@ public class GUI extends JFrame {
 		container.add(new JPlaceholder("Festeggiamenti"));
 		container.add(new JPlaceholder("SEGAVECCHIA"));
 
-		for(final Component c : container.getComponents()) {
-			// TODO
-		}
-
 		return container;
 	}
 
@@ -109,9 +106,20 @@ public class GUI extends JFrame {
 		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		north.add(this.createCountBar(), BorderLayout.NORTH);
 		north.add(this.createCardsTable(), BorderLayout.CENTER);
+		
 		this.getContentPane().add(north, BorderLayout.NORTH);
 		this.getContentPane().add(this.createMatrixSettings(), BorderLayout.CENTER);
 
+		final JButton buttonSave = new JButton("Save");
+		buttonSave.addActionListener((e) -> {
+			try {
+				this.logics.savePDF("test.pdf");
+			} catch (IOException e1) {
+				System.err.println("Error saving file"); // TODO dialog
+			}
+		});
+		this.getContentPane().add(buttonSave, BorderLayout.SOUTH);
+		
 		this.setVisible(true);
 	}
 
