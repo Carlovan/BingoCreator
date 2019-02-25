@@ -1,6 +1,7 @@
 package bingocreator;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -16,6 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import bingo.text.StyledText;
+import bingo.text.Texts;
+
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
 	private final GUILogics logics = new GUILogicsImpl();
@@ -23,6 +27,7 @@ public class GUI extends JFrame {
 	JButton buttonCreate;
 	JLabel labelCards, labelCardsInCarnet;
 	JTextField textCards, textCardsInCarnet;
+	StyledTextField textMatrixSubtitle;
 	BingoCardsTableModel cardsTableModel;
 
 	// ACTION HANDLERS
@@ -88,10 +93,20 @@ public class GUI extends JFrame {
 		final JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-		container.add(new JPlaceholder("CITTÀ DI FORLIMPOPOLI"));
-		container.add(new JPlaceholder("In collaborazione con l'ente flkloristico e culturale forlimpopolese"));
-		container.add(new JPlaceholder("Festeggiamenti"));
-		container.add(new JPlaceholder("SEGAVECCHIA"));
+		for (final StyledText line : Texts.getTitle()) {
+			final JLabel tmp = new JPlaceholder(line.getText(), line.getFontSize());
+			tmp.setAlignmentX(Component.CENTER_ALIGNMENT);
+			container.add(tmp);
+		}
+
+		// TODO
+		container.add(new StyledTextField("Tombola di €", 6));
+		container.add(new StyledTextField("DATA", 6));
+
+		container.add(new StyledTextField("AVIS", 9));
+		container.add(new StyledTextField("asd", 9));
+		container.add(new StyledTextField("asd", 9));
+		container.add(new StyledTextField("asd", 9));
 
 		return container;
 	}
@@ -104,11 +119,12 @@ public class GUI extends JFrame {
 
 		final JPanel north = new JPanel();
 		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
-		north.add(this.createCountBar(), BorderLayout.NORTH);
-		north.add(this.createCardsTable(), BorderLayout.CENTER);
-		
+		north.add(this.createCountBar());
+		north.add(this.createCardsTable());
+
 		this.getContentPane().add(north, BorderLayout.NORTH);
-		this.getContentPane().add(this.createMatrixSettings(), BorderLayout.CENTER);
+		final JComponent west = this.createMatrixSettings();
+		this.getContentPane().add(west, BorderLayout.WEST);
 
 		final JButton buttonSave = new JButton("Save");
 		buttonSave.addActionListener((e) -> {
@@ -119,8 +135,9 @@ public class GUI extends JFrame {
 			}
 		});
 		this.getContentPane().add(buttonSave, BorderLayout.SOUTH);
-		
+
 		this.setVisible(true);
+		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
 
 }
