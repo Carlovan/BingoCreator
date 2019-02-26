@@ -1,11 +1,16 @@
 package bingocreator;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -16,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 import bingo.text.StyledText;
 import bingo.text.Texts;
@@ -27,7 +33,7 @@ public class GUI extends JFrame {
 	JButton buttonCreate;
 	JLabel labelCards, labelCardsInCarnet;
 	JTextField textCards, textCardsInCarnet;
-	StyledTextField textMatrixSubtitle;
+	List<StyledTextField> textMatrixInfo = new ArrayList<>();
 	BingoCardsTableModel cardsTableModel;
 
 	// ACTION HANDLERS
@@ -90,23 +96,67 @@ public class GUI extends JFrame {
 	}
 
 	private JComponent createMatrixSettings() {
+		StyledTextField tmpSTF;
+		JLabel tmpLbl;
+		JPanel tmpPnl;
 		final JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
 		for (final StyledText line : Texts.getTitle()) {
-			final JLabel tmp = new JPlaceholder(line.getText(), line.getFontSize());
-			tmp.setAlignmentX(Component.CENTER_ALIGNMENT);
-			container.add(tmp);
+			tmpLbl = new JPlaceholder(line.getText(), line.getFontSize());
+			tmpLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+			container.add(tmpLbl);
 		}
 
-		// TODO
-		container.add(new StyledTextField("Tombola di €", 6));
-		container.add(new StyledTextField("DATA", 6));
+		tmpSTF = new StyledTextField("Tombola di €", 6);
+		this.textMatrixInfo.add(tmpSTF);
+		container.add(tmpSTF);
 
-		container.add(new StyledTextField("AVIS", 9));
-		container.add(new StyledTextField("asd", 9));
-		container.add(new StyledTextField("asd", 9));
-		container.add(new StyledTextField("asd", 9));
+		tmpSTF = new StyledTextField("Data", 6);
+		this.textMatrixInfo.add(tmpSTF);
+		container.add(tmpSTF);
+
+		final Border blackSolidBorder = BorderFactory.createLineBorder(Color.BLACK);
+		tmpPnl = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		tmpPnl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		tmpPnl.setBackground(Color.WHITE);
+		tmpPnl.setBorder(blackSolidBorder);
+		tmpPnl.add(new JPlaceholder("Cartella N°", 10));
+		tmpPnl.add(new JPlaceholder("###", 10));
+		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
+		container.add(tmpPnl);
+
+		container.add(new JPlaceholder()); // filler
+
+		tmpPnl = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		tmpPnl.setAlignmentX(Component.CENTER_ALIGNMENT);
+		tmpPnl.setBackground(Color.WHITE);
+		tmpPnl.setBorder(blackSolidBorder);
+		tmpPnl.add(new JPlaceholder("Bollettario N°", 10));
+		tmpPnl.add(new JPlaceholder("###", 10));
+		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
+		container.add(tmpPnl);
+
+		container.add(new JPlaceholder()); // filler
+
+		tmpPnl = new JPanel(new GridLayout(2, 5));
+		for (int i = 0; i < 10; i++) {
+			tmpLbl = new JPlaceholder("NUM", 10);
+			tmpLbl.setBorder(BorderFactory.createCompoundBorder(blackSolidBorder, tmpLbl.getBorder()));
+			tmpPnl.add(tmpLbl);
+		}
+		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
+		container.add(tmpPnl);
+
+		container.add(new JPlaceholder()); // filler
+
+		tmpSTF = new StyledTextField("AVIS", 6);
+		this.textMatrixInfo.add(tmpSTF);
+		container.add(tmpSTF);
+
+		tmpSTF = new StyledTextField("asd", 6);
+		this.textMatrixInfo.add(tmpSTF);
+		container.add(tmpSTF);
 
 		return container;
 	}

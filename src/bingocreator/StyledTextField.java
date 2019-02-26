@@ -16,6 +16,7 @@ public class StyledTextField extends JPanel {
 	private final JComboBox<Integer> size;
 
 	public StyledTextField(final String text, final int size) {
+		super();
 		this.text = new JTextField(10);
 		this.size = new JComboBox<>();
 		for (int i = 5; i < 30; i++) {
@@ -27,8 +28,10 @@ public class StyledTextField extends JPanel {
 		this.add(this.text);
 		this.add(this.size);
 
+		this.setMaximumSize(this.getPreferredSize());
+
 		this.setText(text);
-		this.setSize(size);
+		this.setFontSize(size);
 	}
 
 	public StyledText getStyledText() {
@@ -39,7 +42,7 @@ public class StyledTextField extends JPanel {
 		this.text.setText(val);
 	}
 
-	public void setSize(final int val) {
+	public void setFontSize(final int val) {
 		this.size.setSelectedItem(val);
 	}
 }
