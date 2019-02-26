@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -22,9 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-
-import bingo.text.StyledText;
-import bingo.text.Texts;
 
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
@@ -95,18 +94,27 @@ public class GUI extends JFrame {
 		return tablePane;
 	}
 
+	private JComponent createTitle() {
+		final JPanel container = new JPanel(new GridBagLayout());
+		final GridBagConstraints c = new GridBagConstraints();
+
+		// TODO
+
+		// return Texts.getTitle().stream().map(line -> new JPlaceholder(line.getText(),
+		// line.getFontSize()))
+		// .collect(Collectors.toList());
+		return container;
+	}
+
 	private JComponent createMatrixSettings() {
 		StyledTextField tmpSTF;
 		JLabel tmpLbl;
 		JPanel tmpPnl;
-		final JPanel container = new JPanel();
-		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+		final JPanel container = new JPanel(new GridBagLayout());
 
-		for (final StyledText line : Texts.getTitle()) {
-			tmpLbl = new JPlaceholder(line.getText(), line.getFontSize());
-			tmpLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-			container.add(tmpLbl);
-		}
+		final JComponent title = this.createTitle(); // TODO
+//		this.createTitle().stream().peek(line -> line.setAlignmentX(Component.CENTER_ALIGNMENT))
+//				.forEach(line -> container.add(line));
 
 		tmpSTF = new StyledTextField("Tombola di €", 6);
 		this.textMatrixInfo.add(tmpSTF);
@@ -157,6 +165,14 @@ public class GUI extends JFrame {
 		tmpSTF = new StyledTextField("asd", 6);
 		this.textMatrixInfo.add(tmpSTF);
 		container.add(tmpSTF);
+
+		return container;
+	}
+
+	private JComponent createCardSettings() {
+		final JPanel container = new JPanel();
+		// container.setLayout(new GridBagLayout(container, ));
+
 
 		return container;
 	}
