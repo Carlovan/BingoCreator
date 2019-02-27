@@ -1,7 +1,8 @@
 package bingocreator;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -24,11 +25,15 @@ public class StyledTextField extends JPanel {
 		}
 
 		this.text.setPreferredSize(new Dimension(this.getPreferredSize().width, 25));
-		this.setLayout(new FlowLayout());
-		this.add(this.text);
-		this.add(this.size);
+		this.setLayout(new GridBagLayout());
+		final GridBagConstraints c = new GridBagConstraints();
 
-		this.setMaximumSize(this.getPreferredSize());
+		c.gridx = 0;
+		c.weightx = 1;
+		this.add(this.text, c);
+		c.gridx = 1;
+		c.weightx = 0;
+		this.add(this.size, c);
 
 		this.setText(text);
 		this.setFontSize(size);

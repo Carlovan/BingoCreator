@@ -2,11 +2,12 @@ package bingocreator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+
+import bingo.text.StyledText;
+import bingo.text.Texts;
 
 public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
@@ -96,83 +100,96 @@ public class GUI extends JFrame {
 
 	private JComponent createTitle() {
 		final JPanel container = new JPanel(new GridBagLayout());
-		final GridBagConstraints c = new GridBagConstraints();
+		final GridBagConstraints constraint = new GridBagConstraints();
 
-		// TODO
+		constraint.gridx = 0;
+		constraint.anchor = GridBagConstraints.LINE_START;
+		for (int i = 0; i < Texts.getTitle().size(); i++) {
+			final StyledText line = Texts.getTitle().get(i);
+			constraint.gridy = i;
+			container.add(new JPlaceholder(line.getText(), line.getFontSize()), constraint);
+		}
+		return container;
+	}
 
-		// return Texts.getTitle().stream().map(line -> new JPlaceholder(line.getText(),
-		// line.getFontSize()))
-		// .collect(Collectors.toList());
+	private JComponent createNumPlaceholder() {
+		final JPanel container = new JPanel(new GridLayout(2, 5));
+		for (int i = 0; i < 10; i++) {
+			final JLabel tmpLbl = new JPlaceholder("NUM", 9);
+			tmpLbl.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
+					BorderFactory.createEmptyBorder(4, 4, 4, 4)));
+			tmpLbl.setPreferredSize(new Dimension(tmpLbl.getPreferredSize().width, tmpLbl.getPreferredSize().width));
+			container.add(tmpLbl);
+		}
 		return container;
 	}
 
 	private JComponent createMatrixSettings() {
 		StyledTextField tmpSTF;
 		JLabel tmpLbl;
-		JPanel tmpPnl;
 		final JPanel container = new JPanel(new GridBagLayout());
+		final GridBagConstraints constraint = new GridBagConstraints();
+		final Border blackSolidBorder = BorderFactory.createLineBorder(Color.BLACK);
 
-		final JComponent title = this.createTitle(); // TODO
-//		this.createTitle().stream().peek(line -> line.setAlignmentX(Component.CENTER_ALIGNMENT))
-//				.forEach(line -> container.add(line));
+		constraint.gridx = 0;
+		constraint.gridy = 0;
+		constraint.anchor = GridBagConstraints.PAGE_START;
+
+		container.add(this.createTitle(), constraint);
 
 		tmpSTF = new StyledTextField("Tombola di €", 6);
 		this.textMatrixInfo.add(tmpSTF);
-		container.add(tmpSTF);
+		constraint.gridy++;
+		container.add(tmpSTF, constraint);
 
 		tmpSTF = new StyledTextField("Data", 6);
 		this.textMatrixInfo.add(tmpSTF);
-		container.add(tmpSTF);
+		constraint.gridy++;
+		container.add(tmpSTF, constraint);
 
-		final Border blackSolidBorder = BorderFactory.createLineBorder(Color.BLACK);
-		tmpPnl = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		tmpPnl.setAlignmentX(Component.CENTER_ALIGNMENT);
-		tmpPnl.setBackground(Color.WHITE);
-		tmpPnl.setBorder(blackSolidBorder);
-		tmpPnl.add(new JPlaceholder("Cartella N°", 10));
-		tmpPnl.add(new JPlaceholder("###", 10));
-		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
-		container.add(tmpPnl);
+		tmpLbl = new JPlaceholder("Cartella N°  ###", 10);
+		tmpLbl.setBorder(blackSolidBorder);
+		constraint.gridy++;
+		constraint.insets = new Insets(10, 0, 0, 0);
+		constraint.ipadx = 20;
+		constraint.ipady = 15;
+		container.add(tmpLbl, constraint);
 
-		container.add(new JPlaceholder()); // filler
+		tmpLbl = new JPlaceholder("Bollettario N°  ###", 10);
+		tmpLbl.setBorder(blackSolidBorder);
+		constraint.gridy++;
+		container.add(tmpLbl, constraint);
 
-		tmpPnl = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		tmpPnl.setAlignmentX(Component.CENTER_ALIGNMENT);
-		tmpPnl.setBackground(Color.WHITE);
-		tmpPnl.setBorder(blackSolidBorder);
-		tmpPnl.add(new JPlaceholder("Bollettario N°", 10));
-		tmpPnl.add(new JPlaceholder("###", 10));
-		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
-		container.add(tmpPnl);
-
-		container.add(new JPlaceholder()); // filler
-
-		tmpPnl = new JPanel(new GridLayout(2, 5));
-		for (int i = 0; i < 10; i++) {
-			tmpLbl = new JPlaceholder("NUM", 10);
-			tmpLbl.setBorder(BorderFactory.createCompoundBorder(blackSolidBorder, tmpLbl.getBorder()));
-			tmpPnl.add(tmpLbl);
-		}
-		tmpPnl.setMaximumSize(tmpPnl.getPreferredSize());
-		container.add(tmpPnl);
-
-		container.add(new JPlaceholder()); // filler
+		constraint.gridy++;
+		container.add(this.createNumPlaceholder(), constraint);
 
 		tmpSTF = new StyledTextField("AVIS", 6);
 		this.textMatrixInfo.add(tmpSTF);
-		container.add(tmpSTF);
+		constraint.gridy++;
+		constraint.ipadx = 0;
+		constraint.ipady = 0;
+		container.add(tmpSTF, constraint);
 
 		tmpSTF = new StyledTextField("asd", 6);
 		this.textMatrixInfo.add(tmpSTF);
-		container.add(tmpSTF);
+		constraint.gridy++;
+		constraint.insets = new Insets(0, 0, 0, 0);
+		constraint.weighty = 1;
+		container.add(tmpSTF, constraint);
 
 		return container;
 	}
 
 	private JComponent createCardSettings() {
 		final JPanel container = new JPanel();
-		// container.setLayout(new GridBagLayout(container, ));
+		container.setLayout(new GridBagLayout());
+		final GridBagConstraints constraint = new GridBagConstraints();
 
+		constraint.gridx = 0;
+		constraint.gridy = 0;
+		constraint.gridwidth = 2;
+		constraint.anchor = GridBagConstraints.FIRST_LINE_START;
+		container.add(this.createTitle());
 
 		return container;
 	}
@@ -189,8 +206,8 @@ public class GUI extends JFrame {
 		north.add(this.createCardsTable());
 
 		this.getContentPane().add(north, BorderLayout.NORTH);
-		final JComponent west = this.createMatrixSettings();
-		this.getContentPane().add(west, BorderLayout.WEST);
+		this.getContentPane().add(this.createMatrixSettings(), BorderLayout.WEST);
+		this.getContentPane().add(this.createCardSettings(), BorderLayout.CENTER);
 
 		final JButton buttonSave = new JButton("Save");
 		buttonSave.addActionListener((e) -> {
