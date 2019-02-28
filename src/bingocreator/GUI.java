@@ -99,6 +99,10 @@ public class GUI extends JFrame {
 		try {
 			cardsCount = Integer.parseInt(this.textCards.getText());
 			cardsInCarnet = Integer.parseInt(this.textCardsInCarnet.getText());
+			if (cardsCount % cardsInCarnet != 0) {
+				JOptionPane.showMessageDialog(null, String.format("L'ultimo carnet avrà solo %d cartelle invece che %d",
+						cardsCount % cardsInCarnet, cardsInCarnet), "Attenzione", JOptionPane.WARNING_MESSAGE);
+			}
 			this.logics.generate(cardsCount, cardsInCarnet);
 			this.cardsTableModel.setData(this.logics.getCards());
 		} catch (NumberFormatException ex) {
