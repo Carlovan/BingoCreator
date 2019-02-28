@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -28,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import bingo.text.BingoCardParameters;
 import bingo.text.StyledText;
 import bingo.text.Texts;
 
@@ -35,11 +37,59 @@ public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
 	private final GUILogics logics = new GUILogicsImpl();
 
+	private final String smallLogoName = "bobby.jpg"; // TODO settable
+	private final String bigLogoName = "bobby.jpg"; // TODO settable
+	private final String stemmaName = "stemma.jpg"; // TODO settable
+
 	JButton buttonCreate;
 	JLabel labelCards, labelCardsInCarnet;
 	JTextField textCards, textCardsInCarnet;
-	List<StyledTextField> textMatrixInfo = new ArrayList<>();
 	BingoCardsTableModel cardsTableModel;
+	List<StyledTextField> textMatrixSubtitle = new ArrayList<>();
+	List<StyledTextField> textMatrixFooter = new ArrayList<>();
+	List<StyledTextField> textAmount = new ArrayList<>();
+	List<StyledTextField> textMiddle = new ArrayList<>();
+	List<StyledTextField> textAuthorizations = new ArrayList<>();
+
+	private BingoCardParameters getParameters() {
+		return new BingoCardParameters() {
+			private List<StyledText> getText(final List<StyledTextField> fields) {
+				return fields.stream().map(StyledTextField::getStyledText).collect(Collectors.toList());
+			}
+
+			public List<StyledText> getMatrixSubtitle() {
+				return this.getText(textMatrixSubtitle);
+			}
+
+			public List<StyledText> getMatrixFooter() {
+				return this.getText(textMatrixFooter);
+			}
+
+			public List<StyledText> getAmount() {
+				return this.getText(textAmount);
+			}
+
+			public List<StyledText> getMiddle() {
+				return this.getText(textMiddle);
+			}
+
+			public List<StyledText> getAuthorizations() {
+				return this.getText(textAuthorizations);
+			}
+
+			public String getSmallLogoName() {
+				return smallLogoName;
+			}
+
+			public String getBigLogoName() {
+				return bigLogoName;
+			}
+
+			public String getStemmaName() {
+				return stemmaName;
+			}
+		};
+	}
 
 	// ACTION HANDLERS
 	private void buttonCreateClick(ActionEvent event) {
@@ -66,10 +116,10 @@ public class GUI extends JFrame {
 			if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 				final File file = fileChooser.getSelectedFile();
 				String filename = file.getAbsolutePath();
-				if (filename.endsWith(".pdf")) {
+				if (!filename.endsWith(".pdf")) {
 					filename += ".pdf";
 				}
-				this.logics.savePDF(filename);
+				this.logics.savePDF(filename, this.getParameters());
 			}
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Impossibile salvare il file", "Errore",
@@ -78,7 +128,6 @@ public class GUI extends JFrame {
 	}
 
 	// BUILD METHODS
-
 	/**
 	 * Creates a bar that contains inputs to choose cards and carnet counts
 	 *
@@ -167,13 +216,13 @@ public class GUI extends JFrame {
 
 		container.add(this.createTitle(), constraint);
 
-		tmpSTF = new StyledTextField("Tombola di €", 6);
-		this.textMatrixInfo.add(tmpSTF);
+		tmpSTF = new StyledTextField("Tombola di €", 7); // TODO settable
+		this.textMatrixSubtitle.add(tmpSTF);
 		constraint.gridy++;
 		container.add(tmpSTF, constraint);
 
-		tmpSTF = new StyledTextField("Data", 6);
-		this.textMatrixInfo.add(tmpSTF);
+		tmpSTF = new StyledTextField("Data", 7); // TODO settable
+		this.textMatrixSubtitle.add(tmpSTF);
 		constraint.gridy++;
 		container.add(tmpSTF, constraint);
 
@@ -191,27 +240,30 @@ public class GUI extends JFrame {
 		container.add(tmpLbl, constraint);
 
 		constraint.gridy++;
+		constraint.insets.bottom = 10;
 		container.add(this.createNumPlaceholder(), constraint);
 
-		tmpSTF = new StyledTextField("AVIS", 6);
-		this.textMatrixInfo.add(tmpSTF);
-		constraint.gridy++;
+		constraint.insets.top = 0;
+		constraint.insets.bottom = 0;
 		constraint.ipadx = 0;
 		constraint.ipady = 0;
-		container.add(tmpSTF, constraint);
+		for (final String s : new String[] { "AVIS", "", "", "" }) { // TODO settable
+			tmpSTF = new StyledTextField(s, 8);
+			this.textMatrixFooter.add(tmpSTF);
+			constraint.gridy++;
+			container.add(tmpSTF, constraint);
+		}
 
-		tmpSTF = new StyledTextField("asd", 6);
-		this.textMatrixInfo.add(tmpSTF);
 		constraint.gridy++;
-		constraint.insets.top = 0;
 		constraint.weighty = 1;
-		container.add(tmpSTF, constraint);
+		container.add(new JLabel(), constraint); // Filler
 
 		return container;
 	}
 
 	private JComponent createCardSettings() {
 		final JPanel container = new JPanel();
+		StyledTextField tmpSTF;
 		container.setLayout(new GridBagLayout());
 		container.setPreferredSize(new Dimension(800, container.getPreferredSize().height));
 		container.setMinimumSize(new Dimension(1000, 1));
@@ -235,7 +287,7 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 1;
 		constraint.fill = GridBagConstraints.BOTH;
 		try {
-			final JImage img = new JImage("./bobby.jpg");
+			final JImage img = new JImage(this.smallLogoName);
 			container.add(img, constraint);
 		} catch (IOException e) {
 			System.err.println(e.toString());
@@ -247,7 +299,7 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 5;
 		constraint.fill = GridBagConstraints.HORIZONTAL;
 		try {
-			final JImage img = new JImage("./bobby.jpg");
+			final JImage img = new JImage(this.bigLogoName);
 			img.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			img.setPreferredSize(new Dimension(1, 200));
 			img.setMinimumSize(new Dimension(1, 200));
@@ -264,16 +316,28 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 1;
 		final JPanel amountBox = new JPanel(new GridLayout(2, 1));
 		amountBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		amountBox.add(new StyledTextField("CINQUINA FILATA €", 12));
-		amountBox.add(new StyledTextField("TOMBOLA €", 12));
+		tmpSTF = new StyledTextField("CINQUINA FILATA €", 11); // TODO settable
+		this.textAmount.add(tmpSTF);
+		amountBox.add(tmpSTF);
+		tmpSTF = new StyledTextField("TOMBOLA €", 11); // TODO settable
+		this.textAmount.add(tmpSTF);
+		amountBox.add(tmpSTF);
 		container.add(amountBox, constraint);
 
 		// Middle
 		final JPanel middlePanel = new JPanel(new GridLayout(4, 1));
-		middlePanel.add(new StyledTextField("ESTRAZIONE DI DOMENICA", 12));
-		middlePanel.add(new StyledTextField("ore 20,00 in Piazza Garibaldi", 10));
-		middlePanel.add(new StyledTextField("in caso di maltempo l'estrazione rimarrà legata", 8));
-		middlePanel.add(new StyledTextField("alla serata conclusiva dei festeggiamenti", 8));
+		tmpSTF = new StyledTextField("ESTRAZIONE DI DOMENICA", 15); // TODO settable
+		this.textMiddle.add(tmpSTF);
+		middlePanel.add(tmpSTF);
+		tmpSTF = new StyledTextField("ore 20,00 in Piazza Garibaldi", 12); // TODO settable
+		this.textMiddle.add(tmpSTF);
+		middlePanel.add(tmpSTF);
+		tmpSTF = new StyledTextField("in caso di maltempo l'estrazione rimarrà legata", 7); // TODO settable
+		this.textMiddle.add(tmpSTF);
+		middlePanel.add(tmpSTF);
+		tmpSTF = new StyledTextField("alla serata conclusiva dei festeggiamenti", 7); // TODO settable
+		this.textMiddle.add(tmpSTF);
+		middlePanel.add(tmpSTF);
 		constraint.gridx = 1;
 		constraint.gridwidth = 4;
 		container.add(middlePanel, constraint);
@@ -292,7 +356,7 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 1;
 		constraint.fill = GridBagConstraints.NONE;
 		try {
-			final JImage img = new JImage("stemma.jpg");
+			final JImage img = new JImage(this.stemmaName);
 			img.setPreferredSize(new Dimension(img.getImage().getWidth(), img.getImage().getHeight()));
 			img.setMinimumSize(
 					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
@@ -306,10 +370,16 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 3;
 		constraint.fill = GridBagConstraints.HORIZONTAL;
 		final JPanel authBox = new JPanel(new GridLayout(4, 1));
-		authBox.add(new JPlaceholder("Autorizzazioni", 10));
-		authBox.add(new StyledTextField("Sindaco", 10));
-		authBox.add(new StyledTextField("Prefetto", 10));
-		authBox.add(new StyledTextField("Prezzo € 1,00", 10));
+		authBox.add(new JPlaceholder(Texts.getAuthorizationTitle()));
+		tmpSTF = new StyledTextField("Sindaco", 8); // TODO settable
+		this.textAuthorizations.add(tmpSTF);
+		authBox.add(tmpSTF);
+		tmpSTF = new StyledTextField("Prefetto", 8); // TODO settable
+		this.textAuthorizations.add(tmpSTF);
+		authBox.add(tmpSTF);
+		tmpSTF = new StyledTextField("Prezzo € 1,00", 8); // TODO settable
+		this.textAuthorizations.add(tmpSTF);
+		authBox.add(tmpSTF);
 		container.add(authBox, constraint);
 		constraint.fill = GridBagConstraints.NONE;
 
@@ -332,19 +402,14 @@ public class GUI extends JFrame {
 		constraint.gridx = 0;
 		constraint.gridwidth = 5;
 		constraint.fill = GridBagConstraints.HORIZONTAL;
+		final JPanel footerPane = new JPanel();
+		footerPane.setLayout(new BoxLayout(footerPane, BoxLayout.Y_AXIS));
 		for (final StyledText t : Texts.getFooter()) {
-			container.add(new JPlaceholder(t), constraint);
+			footerPane.add(new JPlaceholder(t));
 		}
+		container.add(footerPane, constraint);
 
 		return container;
-	}
-
-	private void simulate() {
-		this.textCards.setText("8");
-		this.textCardsInCarnet.setText("4");
-		this.buttonCreateClick(null);
-		this.buttonSaveClick(null);
-		System.exit(0);
 	}
 
 	/**
@@ -393,7 +458,5 @@ public class GUI extends JFrame {
 
 		this.setVisible(true);
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
-//		simulate();
 	}
 }

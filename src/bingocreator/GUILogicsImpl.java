@@ -10,11 +10,12 @@ import bingo.BingoCardsFactoryImpl;
 import bingo.print.PrintManager;
 import bingo.print.PrintManagerImpl;
 import bingo.print.PrintableBingoCard;
+import bingo.text.BingoCardParameters;
 
 public class GUILogicsImpl implements GUILogics {
 	PrintManager cards = new PrintManagerImpl(1);
-	
-	
+
+
 	@Override
 	public List<PrintableBingoCard> generate(int cardsCount, int cardsInCarnet) {
 		this.cards = new PrintManagerImpl(cardsInCarnet);
@@ -31,7 +32,8 @@ public class GUILogicsImpl implements GUILogics {
 	}
 
 	@Override
-	public void savePDF(final String filename) throws IOException {
+	public void savePDF(final String filename, final BingoCardParameters parameters) throws IOException {
+		this.cards.setParameters(parameters);
 		final PDDocument doc = this.cards.getPDF();
 		doc.save(filename);
 		doc.close();
