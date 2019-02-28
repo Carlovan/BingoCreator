@@ -37,8 +37,8 @@ public class GUI extends JFrame {
 	private static final long serialVersionUID = 1464069750731803934L;
 	private final GUILogics logics = new GUILogicsImpl();
 
-	private final String smallLogoName = "bobby.jpg"; // TODO settable
-	private final String bigLogoName = "bobby.jpg"; // TODO settable
+	private final String smallLogoName = "smallLogo.jpg"; // TODO settable
+	private final String bigLogoName = "bigLogo.jpg"; // TODO settable
 	private final String stemmaName = "stemma.jpg"; // TODO settable
 
 	JButton buttonCreate;
@@ -299,7 +299,10 @@ public class GUI extends JFrame {
 			final JImage img = new JImage(this.smallLogoName);
 			container.add(img, constraint);
 		} catch (IOException e) {
-			System.err.println(e.toString());
+			JOptionPane.showMessageDialog(null,
+					"Immagine non trovata: il file " + this.smallLogoName + " non è presente", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 
 		// Logo big
@@ -314,7 +317,9 @@ public class GUI extends JFrame {
 			img.setMinimumSize(new Dimension(1, 200));
 			container.add(img, constraint);
 		} catch (IOException e) {
-			System.err.println(e.toString());
+			JOptionPane.showMessageDialog(null, "Immagine non trovata: il file " + this.bigLogoName + " non è presente",
+					"Errore", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 
 		constraint.gridy++;
@@ -371,7 +376,10 @@ public class GUI extends JFrame {
 					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
 			container.add(img, constraint);
 		} catch (IOException e) {
-			System.err.println(e.toString());
+			JOptionPane.showMessageDialog(null,
+					"Immagine non trovata: il file " + this.smallLogoName + " non è presente", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 
 		// Authorizations
