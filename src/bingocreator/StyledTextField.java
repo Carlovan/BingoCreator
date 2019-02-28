@@ -1,5 +1,6 @@
 package bingocreator;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -19,6 +20,9 @@ public class StyledTextField extends JPanel {
 		super();
 		this.text = new JTextField(10);
 		this.size = new JComboBox<>();
+		final Font font = this.text.getFont();
+		this.text.setFont(font.deriveFont(10.0f));
+		this.size.setFont(font.deriveFont(10.0f));
 		for (int i = 5; i < 30; i++) {
 			this.size.addItem(i);
 		}

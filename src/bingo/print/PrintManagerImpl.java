@@ -3,6 +3,7 @@ package bingo.print;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,23 +30,23 @@ public class PrintManagerImpl implements PrintManager {
 	public PrintManagerImpl(final int cardsInCarnet) {
 		this(cardsInCarnet, new BingoCardParameters() {
 			public List<StyledText> getMatrixSubtitle() {
-				return List.of();
+				return Collections.emptyList();
 			}
 
 			public List<StyledText> getMatrixFooter() {
-				return List.of();
+				return Collections.emptyList();
 			}
 
 			public List<StyledText> getAmount() {
-				return List.of();
+				return Collections.emptyList();
 			}
 
 			public List<StyledText> getMiddle() {
-				return List.of();
+				return Collections.emptyList();
 			}
 
 			public List<StyledText> getAuthorizations() {
-				return List.of();
+				return Collections.emptyList();
 			}
 
 			public String getSmallLogoName() {

@@ -138,7 +138,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		// Images
 		final float logoW = 80;
 		final float logoH = logoW;
-		final float logo2W = cardSize - 10;
+		final float logo2W = 400;
 		final float logo2H = 120;
 		final float logo2Bottom = 200;
 		final PDImageXObject logo = PDImageXObject.createFromFile(parameters.getSmallLogoName(), document);

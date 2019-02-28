@@ -131,7 +131,7 @@ public class GUI extends JFrame {
 				this.logics.savePDF(filename, this.getParameters());
 			}
 		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Impossibile salvare il file", "Errore",
+			JOptionPane.showMessageDialog(null, e1.toString(), "Errore",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -175,7 +175,7 @@ public class GUI extends JFrame {
 
 		final JTable cardsTable = new JTable(cardsTableModel);
 		final JScrollPane tablePane = new JScrollPane(cardsTable);
-		tablePane.setPreferredSize(new Dimension(tablePane.getPreferredSize().width, 200));
+		tablePane.setPreferredSize(new Dimension(tablePane.getPreferredSize().width, 150));
 		return tablePane;
 	}
 
@@ -283,7 +283,7 @@ public class GUI extends JFrame {
 		constraint.anchor = GridBagConstraints.FIRST_LINE_START;
 		constraint.weightx = 1;
 		constraint.weighty = 1;
-		constraint.insets = new Insets(10, 10, 10, 10);
+		constraint.insets = new Insets(2, 4, 2, 4);
 
 		// Title
 		constraint.gridwidth = 4;
@@ -309,12 +309,12 @@ public class GUI extends JFrame {
 		constraint.gridx = 0;
 		constraint.gridy++;
 		constraint.gridwidth = 5;
-		constraint.fill = GridBagConstraints.HORIZONTAL;
+		constraint.fill = GridBagConstraints.NONE;
 		try {
 			final JImage img = new JImage(this.bigLogoName);
 			img.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-			img.setPreferredSize(new Dimension(1, 200));
-			img.setMinimumSize(new Dimension(1, 200));
+			img.setPreferredSize(new Dimension(400, 120));
+			img.setMinimumSize(new Dimension(400, 120));
 			container.add(img, constraint);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Immagine non trovata: il file " + this.bigLogoName + " non è presente",
@@ -468,13 +468,14 @@ public class GUI extends JFrame {
 		constraint.gridwidth = 2;
 		constraint.fill = GridBagConstraints.NONE;
 		constraint.anchor = GridBagConstraints.LINE_END;
-		constraint.insets = new Insets(15, 15, 15, 15);
+		constraint.insets = new Insets(0, 15, 5, 15);
 		constraint.weighty = 0;
 		final JButton buttonSave = new JButton("Salva cartelle");
 		buttonSave.addActionListener(this::buttonSaveClick);
 		this.getContentPane().add(buttonSave, constraint);
 
-
+		this.pack();
+		this.setSize(new Dimension(1000, 700));
 		this.setVisible(true);
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
