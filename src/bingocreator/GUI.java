@@ -112,6 +112,11 @@ public class GUI extends JFrame {
 	}
 
 	private void buttonSaveClick(ActionEvent event) {
+		if (this.logics.getCards().size() == 0) {
+			JOptionPane.showMessageDialog(null, "È necessario prima generare le cartelle", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		try {
 			final JFileChooser fileChooser = new JFileChooser();
 			final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
@@ -453,9 +458,11 @@ public class GUI extends JFrame {
 		constraint.gridy++;
 		constraint.gridx = 0;
 		constraint.gridwidth = 2;
-		constraint.fill = GridBagConstraints.HORIZONTAL;
+		constraint.fill = GridBagConstraints.NONE;
+		constraint.anchor = GridBagConstraints.LINE_END;
+		constraint.insets = new Insets(15, 15, 15, 15);
 		constraint.weighty = 0;
-		final JButton buttonSave = new JButton("Save");
+		final JButton buttonSave = new JButton("Salva cartelle");
 		buttonSave.addActionListener(this::buttonSaveClick);
 		this.getContentPane().add(buttonSave, constraint);
 
