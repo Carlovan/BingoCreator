@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import bingo.text.StyledText;
 import bingo.text.Texts;
@@ -51,6 +54,23 @@ public class GUI extends JFrame {
 			this.cardsTableModel.setData(this.logics.getCards());
 		} catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(null, "I valori inseriti non sono validi", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void buttonSaveClick(ActionEvent event) {
+		try {
+//			final JFileChooser fileChooser = new JFileChooser();
+//			final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
+//			fileChooser.addChoosableFileFilter(filter);
+//			fileChooser.setAcceptAllFileFilterUsed(false);
+//			if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+//			  final File file = fileChooser.getSelectedFile();
+//			  this.logics.savePDF(file.getAbsolutePath());
+//			}
+			this.logics.savePDF("test.pdf");
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Impossibile salvare il file", "Errore",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -182,6 +202,7 @@ public class GUI extends JFrame {
 
 	private JComponent createCardSettings() {
 		final JPanel container = new JPanel();
+		final StyledTextField tmpSTF;
 		container.setLayout(new GridBagLayout());
 		final GridBagConstraints constraint = new GridBagConstraints();
 
@@ -189,11 +210,25 @@ public class GUI extends JFrame {
 		constraint.gridy = 0;
 		constraint.gridwidth = 2;
 		constraint.anchor = GridBagConstraints.FIRST_LINE_START;
-		container.add(this.createTitle());
+		constraint.weightx = 1;
+		constraint.weighty = 1;
+		container.add(this.createTitle(), constraint);
+		
+		constraint.gridy = 1;
+		tmpSTF = new StyledTextField("Tombola di €", 6);
+		container.add(tmpSTF, constraint);
 
 		return container;
 	}
 
+	private void simulate() {
+		this.textCards.setText("8");
+		this.textCardsInCarnet.setText("4");
+		this.buttonCreateClick(null);
+		this.buttonSaveClick(null);
+		System.exit(0);
+	}
+	
 	/**
 	 * Builds the GUI
 	 */
@@ -210,17 +245,13 @@ public class GUI extends JFrame {
 		this.getContentPane().add(this.createCardSettings(), BorderLayout.CENTER);
 
 		final JButton buttonSave = new JButton("Save");
-		buttonSave.addActionListener((e) -> {
-			try {
-				this.logics.savePDF("test.pdf");
-			} catch (IOException e1) {
-				System.err.println("Error saving file"); // TODO dialog
-			}
-		});
+		buttonSave.addActionListener(this::buttonSaveClick);
 		this.getContentPane().add(buttonSave, BorderLayout.SOUTH);
 
+		
 		this.setVisible(true);
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		
+		simulate();
 	}
-
 }

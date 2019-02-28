@@ -31,7 +31,8 @@ public class PrintManagerImpl implements PrintManager {
 		final Map<Integer, PDPage> pages = new HashMap<>();
 		
 		final Map<FontType, PDFont> fonts = new HashMap<>();
-		fonts.put(FontType.REGULAR, PDType0Font.load(doc, new File(PrintManager.FONT_NAME)));
+		fonts.put(FontType.REGULAR, PDType0Font.load(doc, new File(PrintManager.FONT_NAME + "-Regular.ttf")));
+		fonts.put(FontType.BOLD, PDType0Font.load(doc, new File(PrintManager.FONT_NAME + "-Bold.ttf")));
 		
 		final float halfPageHeight = PrintManager.PAGE_SIZE.getHeight() / 2.0f;
 		
@@ -45,7 +46,7 @@ public class PrintManagerImpl implements PrintManager {
 			if(shouldTranslate) {
 				content.transform(Matrix.getTranslateInstance(0.0f, halfPageHeight));
 			}
-			card.addPDF(content, fonts, cardSize);
+			card.addPDF(doc, content, fonts, cardSize);
 			if(shouldTranslate) {
 				content.transform(Matrix.getTranslateInstance(0.0f, -halfPageHeight));
 			}

@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import bingo.BingoCard;
 
 public interface PrintManager {
-	final String FONT_NAME = "OpenSans-Regular.ttf";
+	final String FONT_NAME = "OpenSans";
 	final PDRectangle PAGE_SIZE = PDRectangle.A4;
 	
 	PDDocument getPDF() throws IOException;
