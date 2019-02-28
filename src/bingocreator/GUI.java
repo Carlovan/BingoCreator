@@ -1,6 +1,5 @@
 package bingocreator;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -57,18 +56,21 @@ public class GUI extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	private void buttonSaveClick(ActionEvent event) {
 		try {
-//			final JFileChooser fileChooser = new JFileChooser();
-//			final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
-//			fileChooser.addChoosableFileFilter(filter);
-//			fileChooser.setAcceptAllFileFilterUsed(false);
-//			if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-//			  final File file = fileChooser.getSelectedFile();
-//			  this.logics.savePDF(file.getAbsolutePath());
-//			}
-			this.logics.savePDF("test.pdf");
+			final JFileChooser fileChooser = new JFileChooser();
+			final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
+			fileChooser.addChoosableFileFilter(filter);
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+				final File file = fileChooser.getSelectedFile();
+				String filename = file.getAbsolutePath();
+				if (filename.endsWith(".pdf")) {
+					filename += ".pdf";
+				}
+				this.logics.savePDF(filename);
+			}
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Impossibile salvare il file", "Errore",
 					JOptionPane.ERROR_MESSAGE);
@@ -115,6 +117,7 @@ public class GUI extends JFrame {
 
 		final JTable cardsTable = new JTable(cardsTableModel);
 		final JScrollPane tablePane = new JScrollPane(cardsTable);
+		tablePane.setPreferredSize(new Dimension(tablePane.getPreferredSize().width, 200));
 		return tablePane;
 	}
 
@@ -122,12 +125,14 @@ public class GUI extends JFrame {
 		final JPanel container = new JPanel(new GridBagLayout());
 		final GridBagConstraints constraint = new GridBagConstraints();
 
+		constraint.weightx = 1;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
 		constraint.gridx = 0;
 		constraint.anchor = GridBagConstraints.LINE_START;
 		for (int i = 0; i < Texts.getTitle().size(); i++) {
 			final StyledText line = Texts.getTitle().get(i);
 			constraint.gridy = i;
-			container.add(new JPlaceholder(line.getText(), line.getFontSize()), constraint);
+			container.add(new JPlaceholder(line), constraint);
 		}
 		return container;
 	}
@@ -148,12 +153,17 @@ public class GUI extends JFrame {
 		StyledTextField tmpSTF;
 		JLabel tmpLbl;
 		final JPanel container = new JPanel(new GridBagLayout());
+		container.setPreferredSize(new Dimension(250, container.getPreferredSize().height));
+		container.setMinimumSize(new Dimension(250, 1));
 		final GridBagConstraints constraint = new GridBagConstraints();
 		final Border blackSolidBorder = BorderFactory.createLineBorder(Color.BLACK);
 
 		constraint.gridx = 0;
 		constraint.gridy = 0;
-		constraint.anchor = GridBagConstraints.PAGE_START;
+		constraint.anchor = GridBagConstraints.FIRST_LINE_START;
+		constraint.weightx = 1;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
+		constraint.insets = new Insets(0, 10, 0, 0);
 
 		container.add(this.createTitle(), constraint);
 
@@ -170,7 +180,7 @@ public class GUI extends JFrame {
 		tmpLbl = new JPlaceholder("Cartella N°  ###", 10);
 		tmpLbl.setBorder(blackSolidBorder);
 		constraint.gridy++;
-		constraint.insets = new Insets(10, 0, 0, 0);
+		constraint.insets.top = 10;
 		constraint.ipadx = 20;
 		constraint.ipady = 15;
 		container.add(tmpLbl, constraint);
@@ -193,7 +203,7 @@ public class GUI extends JFrame {
 		tmpSTF = new StyledTextField("asd", 6);
 		this.textMatrixInfo.add(tmpSTF);
 		constraint.gridy++;
-		constraint.insets = new Insets(0, 0, 0, 0);
+		constraint.insets.top = 0;
 		constraint.weighty = 1;
 		container.add(tmpSTF, constraint);
 
@@ -202,21 +212,125 @@ public class GUI extends JFrame {
 
 	private JComponent createCardSettings() {
 		final JPanel container = new JPanel();
-		final StyledTextField tmpSTF;
 		container.setLayout(new GridBagLayout());
+		container.setPreferredSize(new Dimension(800, container.getPreferredSize().height));
+		container.setMinimumSize(new Dimension(1000, 1));
 		final GridBagConstraints constraint = new GridBagConstraints();
 
 		constraint.gridx = 0;
 		constraint.gridy = 0;
-		constraint.gridwidth = 2;
 		constraint.anchor = GridBagConstraints.FIRST_LINE_START;
 		constraint.weightx = 1;
 		constraint.weighty = 1;
+		constraint.insets = new Insets(10, 10, 10, 10);
+
+		// Title
+		constraint.gridwidth = 4;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
 		container.add(this.createTitle(), constraint);
-		
-		constraint.gridy = 1;
-		tmpSTF = new StyledTextField("Tombola di €", 6);
-		container.add(tmpSTF, constraint);
+
+
+		// Logo small
+		constraint.gridx = 4;
+		constraint.gridwidth = 1;
+		constraint.fill = GridBagConstraints.BOTH;
+		try {
+			final JImage img = new JImage("./bobby.jpg");
+			container.add(img, constraint);
+		} catch (IOException e) {
+			System.err.println(e.toString());
+		}
+
+		// Logo big
+		constraint.gridx = 0;
+		constraint.gridy++;
+		constraint.gridwidth = 5;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
+		try {
+			final JImage img = new JImage("./bobby.jpg");
+			img.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			img.setPreferredSize(new Dimension(1, 200));
+			img.setMinimumSize(new Dimension(1, 200));
+			container.add(img, constraint);
+		} catch (IOException e) {
+			System.err.println(e.toString());
+		}
+
+		constraint.gridy++;
+		constraint.gridx = 0;
+
+		// Amount box
+		constraint.fill = GridBagConstraints.BOTH;
+		constraint.gridwidth = 1;
+		final JPanel amountBox = new JPanel(new GridLayout(2, 1));
+		amountBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		amountBox.add(new StyledTextField("CINQUINA FILATA €", 12));
+		amountBox.add(new StyledTextField("TOMBOLA €", 12));
+		container.add(amountBox, constraint);
+
+		// Middle
+		final JPanel middlePanel = new JPanel(new GridLayout(4, 1));
+		middlePanel.add(new StyledTextField("ESTRAZIONE DI DOMENICA", 12));
+		middlePanel.add(new StyledTextField("ore 20,00 in Piazza Garibaldi", 10));
+		middlePanel.add(new StyledTextField("in caso di maltempo l'estrazione rimarrà legata", 8));
+		middlePanel.add(new StyledTextField("alla serata conclusiva dei festeggiamenti", 8));
+		constraint.gridx = 1;
+		constraint.gridwidth = 4;
+		container.add(middlePanel, constraint);
+
+		constraint.gridy++;
+		constraint.gridx = 0;
+
+		// Numbers
+		constraint.gridwidth = 1;
+		container.add(this.createNumPlaceholder(), constraint);
+
+		// Stemma
+		constraint.gridx = 1;
+		constraint.gridwidth = 1;
+		constraint.fill = GridBagConstraints.BOTH;
+		constraint.anchor = GridBagConstraints.CENTER;
+		try {
+			final JImage img = new JImage("stemma.jpg");
+			container.add(img, constraint);
+		} catch (IOException e) {
+			System.err.println(e.toString());
+		}
+
+		// Authorizations
+		constraint.gridx = 2;
+		constraint.gridwidth = 3;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
+		final JPanel authBox = new JPanel(new GridLayout(4, 1));
+		authBox.add(new JPlaceholder("Autorizzazioni", 10));
+		authBox.add(new StyledTextField("Sindaco", 10));
+		authBox.add(new StyledTextField("Prefetto", 10));
+		authBox.add(new StyledTextField("Prezzo € 1,00", 10));
+		container.add(authBox, constraint);
+		constraint.fill = GridBagConstraints.NONE;
+
+		constraint.gridy++;
+		constraint.gridx = 0;
+
+		// IDs
+		constraint.gridwidth = 1;
+		constraint.ipadx = constraint.ipady = 10;
+		final JLabel labelID = new JLabel("Cartella N° ###");
+		labelID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		container.add(labelID, constraint);
+		constraint.gridx = 2;
+		final JLabel labelCarnetID = new JLabel("Bollettario N° ###");
+		labelCarnetID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		container.add(labelCarnetID, constraint);
+
+		// Footer
+		constraint.gridy++;
+		constraint.gridx = 0;
+		constraint.gridwidth = 5;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
+		for (final StyledText t : Texts.getFooter()) {
+			container.add(new JPlaceholder(t), constraint);
+		}
 
 		return container;
 	}
@@ -228,30 +342,54 @@ public class GUI extends JFrame {
 		this.buttonSaveClick(null);
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Builds the GUI
 	 */
 	public GUI() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setContentPane(new JPanel(new GridBagLayout()));
+		final GridBagConstraints constraint = new GridBagConstraints();
+		constraint.weightx = 1;
+		constraint.gridx = 0;
+		constraint.gridy = 0;
+		constraint.anchor = GridBagConstraints.LINE_START;
 
 		final JPanel north = new JPanel();
 		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		north.add(this.createCountBar());
 		north.add(this.createCardsTable());
+		north.setMinimumSize(new Dimension(north.getPreferredSize().width, 200));
 
-		this.getContentPane().add(north, BorderLayout.NORTH);
-		this.getContentPane().add(this.createMatrixSettings(), BorderLayout.WEST);
-		this.getContentPane().add(this.createCardSettings(), BorderLayout.CENTER);
+		constraint.fill = GridBagConstraints.BOTH;
+		constraint.gridwidth = 2;
+		constraint.weighty = 0;
+		this.getContentPane().add(north, constraint);
 
+		constraint.gridwidth = 1;
+		constraint.gridy++;
+		constraint.weightx = 0.4;
+		constraint.weighty = 1;
+		constraint.fill = GridBagConstraints.VERTICAL;
+		this.getContentPane().add(this.createMatrixSettings(), constraint);
+
+		constraint.gridx = 1;
+		constraint.weightx = 1;
+		this.getContentPane().add(this.createCardSettings(), constraint);
+
+		constraint.gridy++;
+		constraint.gridx = 0;
+		constraint.gridwidth = 2;
+		constraint.fill = GridBagConstraints.HORIZONTAL;
+		constraint.weighty = 0;
 		final JButton buttonSave = new JButton("Save");
 		buttonSave.addActionListener(this::buttonSaveClick);
-		this.getContentPane().add(buttonSave, BorderLayout.SOUTH);
+		this.getContentPane().add(buttonSave, constraint);
 
-		
+
 		this.setVisible(true);
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		
-		simulate();
+
+//		simulate();
 	}
 }

@@ -2,15 +2,20 @@ package bingocreator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+
+import bingo.text.StyledText;
 
 public class JPlaceholder extends JLabel {
 	private static final long serialVersionUID = 3222067926395246516L;
 
+	public JPlaceholder(final StyledText text) {
+		this(text.getText(), text.getFontSize() + 2);
+	}
+
 	public JPlaceholder(final String s, final float fontSize) {
 		// HTML to make text wrap
-		super("<html><div style='text-align: center;'>" + s + "</div></html>", SwingConstants.CENTER);
+		super("<html>" + s + "</html>");
 
 		// final Border line = BorderFactory.createDashedBorder(Color.BLACK, 20, 10);
 		final Border padding = BorderFactory.createEmptyBorder(3, 10, 3, 10);
