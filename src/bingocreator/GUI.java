@@ -283,15 +283,19 @@ public class GUI extends JFrame {
 
 		// Numbers
 		constraint.gridwidth = 1;
+		constraint.fill = GridBagConstraints.BOTH;
+		constraint.anchor = GridBagConstraints.CENTER;
 		container.add(this.createNumPlaceholder(), constraint);
 
 		// Stemma
 		constraint.gridx = 1;
 		constraint.gridwidth = 1;
-		constraint.fill = GridBagConstraints.BOTH;
-		constraint.anchor = GridBagConstraints.CENTER;
+		constraint.fill = GridBagConstraints.NONE;
 		try {
 			final JImage img = new JImage("stemma.jpg");
+			img.setPreferredSize(new Dimension(img.getImage().getWidth(), img.getImage().getHeight()));
+			img.setMinimumSize(
+					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
 			container.add(img, constraint);
 		} catch (IOException e) {
 			System.err.println(e.toString());
