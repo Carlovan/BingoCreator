@@ -1,6 +1,5 @@
 package bingo.print;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,8 +73,8 @@ public class PrintManagerImpl implements PrintManager {
 		final Map<Integer, PDPage> pages = new HashMap<>();
 
 		final Map<FontType, PDFont> fonts = new HashMap<>();
-		fonts.put(FontType.REGULAR, PDType0Font.load(doc, new File(PrintManager.FONT_NAME + "-Regular.ttf")));
-		fonts.put(FontType.BOLD, PDType0Font.load(doc, new File(PrintManager.FONT_NAME + "-Bold.ttf")));
+		fonts.put(FontType.REGULAR, PDType0Font.load(doc, this.getClass().getResourceAsStream(PrintManager.FONT_NAME + "-Regular.ttf")));
+		fonts.put(FontType.BOLD, PDType0Font.load(doc, this.getClass().getResourceAsStream(PrintManager.FONT_NAME + "-Bold.ttf")));
 
 		final float halfPageHeight = PrintManager.PAGE_SIZE.getHeight() / 2.0f;
 
