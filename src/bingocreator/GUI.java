@@ -1,5 +1,6 @@
 package bingocreator;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,14 +19,17 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -40,6 +44,7 @@ public class GUI extends JFrame {
 	private final String smallLogoName = "smallLogo.jpg"; // TODO settable
 	private final String bigLogoName = "bigLogo.jpg"; // TODO settable
 	private final String stemmaName = "stemma.jpg"; // TODO settable
+	private final String titleLogoName = "titleLogo.jpg"; // TODO settable
 
 	JButton buttonCreate;
 	JLabel labelCards, labelCardsInCarnet;
@@ -49,8 +54,26 @@ public class GUI extends JFrame {
 	List<StyledTextField> textMatrixFooter = new ArrayList<>();
 	List<StyledTextField> textAmount = new ArrayList<>();
 	List<StyledTextField> textMiddle = new ArrayList<>();
+	List<StyledTextField> textPrices = new ArrayList<>();
 	List<StyledTextField> textAuthorizations = new ArrayList<>();
 
+	private JDialog createLoading(final String msg) {
+		final JDialog loadingFrame = new JDialog(this, msg, true);
+		loadingFrame.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    	final JProgressBar progressBar = new JProgressBar();
+	    progressBar.setIndeterminate(true);
+	    final JPanel contentPane = new JPanel();
+	    contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	    contentPane.setLayout(new BorderLayout());
+	    contentPane.add(new JLabel(msg), BorderLayout.NORTH);
+	    contentPane.add(progressBar, BorderLayout.CENTER);
+	    loadingFrame.setContentPane(contentPane);
+	    loadingFrame.pack();
+	    loadingFrame.setLocationRelativeTo(null);
+
+	    return loadingFrame;
+	}
+	
 	private BingoCardParameters getParameters() {
 		return new BingoCardParameters() {
 			private List<StyledText> getText(final List<StyledTextField> fields) {
@@ -77,6 +100,10 @@ public class GUI extends JFrame {
 				return this.getText(textAuthorizations);
 			}
 
+			public List<StyledText> getPrices() {
+				return this.getText(textPrices);
+			}
+
 			public String getSmallLogoName() {
 				return smallLogoName;
 			}
@@ -87,6 +114,10 @@ public class GUI extends JFrame {
 
 			public String getStemmaName() {
 				return stemmaName;
+			}
+
+			public String getTitleLogoName() {
+				return titleLogoName;
 			}
 		};
 	}
@@ -117,22 +148,38 @@ public class GUI extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		try {
-			final JFileChooser fileChooser = new JFileChooser();
-			final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
-			fileChooser.addChoosableFileFilter(filter);
-			fileChooser.setAcceptAllFileFilterUsed(false);
-			if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-				final File file = fileChooser.getSelectedFile();
-				String filename = file.getAbsolutePath();
-				if (!filename.endsWith(".pdf")) {
-					filename += ".pdf";
-				}
-				this.logics.savePDF(filename, this.getParameters());
+		final JFileChooser fileChooser = new JFileChooser();
+		final FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF", "pdf");
+		fileChooser.addChoosableFileFilter(filter);
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		final int response = fileChooser.showSaveDialog(null);
+		if (response == JFileChooser.APPROVE_OPTION) {
+			final File file = fileChooser.getSelectedFile();
+			String filename = file.getAbsolutePath();
+			if (!filename.endsWith(".pdf")) {
+				filename += ".pdf";
 			}
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, e1.toString(), "Errore",
-					JOptionPane.ERROR_MESSAGE);
+			final String finFileName = filename;
+			final JDialog loading = this.createLoading("Salvataggio in corso...");
+			final Thread saver = new Thread(new Runnable() {
+				public void run() {
+					try {
+						logics.savePDF(finFileName, getParameters());
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, e1.toString(), "Errore",
+								JOptionPane.ERROR_MESSAGE);
+					} finally {
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								loading.setVisible(false);
+								loading.dispose();
+							}
+						});
+					}
+				}
+			});
+			saver.start();
+			loading.setVisible(true);
 		}
 	}
 
@@ -286,14 +333,54 @@ public class GUI extends JFrame {
 		constraint.insets = new Insets(2, 4, 2, 4);
 
 		// Title
-		constraint.gridwidth = 4;
+		constraint.gridwidth = 2;
 		constraint.fill = GridBagConstraints.HORIZONTAL;
 		container.add(this.createTitle(), constraint);
 
-
+		// Title Logo
+		constraint.gridx = 2;
+		constraint.gridwidth = 1;
+		constraint.weightx = 0.5;
+		constraint.fill = GridBagConstraints.NONE;
+		try {
+			final JImage img = new JImage(this.titleLogoName);
+			final float maxW = 70;
+			final float w = Math.min(maxW, img.getImage().getWidth());
+			final float h = img.getImage().getHeight() * w / img.getImage().getWidth();
+			img.setPreferredSize(new Dimension((int)w, (int)h));
+			img.setMinimumSize(
+					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
+			container.add(img, constraint);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,
+					"Immagine non trovata: il file " + this.titleLogoName + " non è presente", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+		
+		// Stemma
+		constraint.gridx = 3;
+		constraint.gridwidth = 1;
+		constraint.weightx = 0.5;
+		constraint.fill = GridBagConstraints.NONE;
+		try {
+			final JImage img = new JImage(this.stemmaName);
+			img.setPreferredSize(new Dimension(img.getImage().getWidth(), img.getImage().getHeight()));
+			img.setMinimumSize(
+					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
+			container.add(img, constraint);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null,
+					"Immagine non trovata: il file " + this.stemmaName + " non è presente", "Errore",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
+		
+		
 		// Logo small
 		constraint.gridx = 4;
 		constraint.gridwidth = 1;
+		constraint.weightx = 2;
 		constraint.fill = GridBagConstraints.BOTH;
 		try {
 			final JImage img = new JImage(this.smallLogoName);
@@ -304,6 +391,7 @@ public class GUI extends JFrame {
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
+		constraint.weightx = 1;
 
 		// Logo big
 		constraint.gridx = 0;
@@ -327,7 +415,7 @@ public class GUI extends JFrame {
 
 		// Amount box
 		constraint.fill = GridBagConstraints.BOTH;
-		constraint.gridwidth = 1;
+		constraint.gridwidth = 2;
 		final JPanel amountBox = new JPanel(new GridLayout(2, 1));
 		amountBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		tmpSTF = new StyledTextField("CINQUINA FILATA €", 11); // TODO settable
@@ -352,8 +440,8 @@ public class GUI extends JFrame {
 		tmpSTF = new StyledTextField("alla serata conclusiva dei festeggiamenti", 7); // TODO settable
 		this.textMiddle.add(tmpSTF);
 		middlePanel.add(tmpSTF);
-		constraint.gridx = 1;
-		constraint.gridwidth = 4;
+		constraint.gridx = 2;
+		constraint.gridwidth = 3;
 		container.add(middlePanel, constraint);
 
 		constraint.gridy++;
@@ -364,24 +452,35 @@ public class GUI extends JFrame {
 		constraint.fill = GridBagConstraints.BOTH;
 		constraint.anchor = GridBagConstraints.CENTER;
 		container.add(this.createNumPlaceholder(), constraint);
-
-		// Stemma
+		
+		// Prices
 		constraint.gridx = 1;
-		constraint.gridwidth = 1;
-		constraint.fill = GridBagConstraints.NONE;
-		try {
-			final JImage img = new JImage(this.stemmaName);
-			img.setPreferredSize(new Dimension(img.getImage().getWidth(), img.getImage().getHeight()));
-			img.setMinimumSize(
-					new Dimension((int) (img.getImage().getWidth() * 0.7), (int) (img.getImage().getHeight() * 0.7)));
-			container.add(img, constraint);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"Immagine non trovata: il file " + this.smallLogoName + " non è presente", "Errore",
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
+		constraint.gridwidth = 4;
+		constraint.fill = GridBagConstraints.BOTH;
+		final JPanel pricesPane = new JPanel(new GridLayout(2,1));
+		tmpSTF = new StyledTextField("Totale €", 12);
+		this.textPrices.add(tmpSTF);
+		pricesPane.add(tmpSTF);
+		tmpSTF = new StyledTextField("Prezzo cartella €", 12);
+		this.textPrices.add(tmpSTF);
+		pricesPane.add(tmpSTF);
+		container.add(pricesPane, constraint);
 
+		constraint.gridy++;
+		constraint.gridx = 0;
+
+		// IDs
+		constraint.gridwidth = 1;
+		constraint.ipadx = constraint.ipady = 10;
+		constraint.fill = GridBagConstraints.NONE;
+		final JLabel labelID = new JLabel("Cartella N° ###");
+		labelID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		container.add(labelID, constraint);
+		constraint.gridx = 1;
+		final JLabel labelCarnetID = new JLabel("Bollettario N° ###");
+		labelCarnetID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		container.add(labelCarnetID, constraint);
+		
 		// Authorizations
 		constraint.gridx = 2;
 		constraint.gridwidth = 3;
@@ -399,20 +498,6 @@ public class GUI extends JFrame {
 		authBox.add(tmpSTF);
 		container.add(authBox, constraint);
 		constraint.fill = GridBagConstraints.NONE;
-
-		constraint.gridy++;
-		constraint.gridx = 0;
-
-		// IDs
-		constraint.gridwidth = 1;
-		constraint.ipadx = constraint.ipady = 10;
-		final JLabel labelID = new JLabel("Cartella N° ###");
-		labelID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		container.add(labelID, constraint);
-		constraint.gridx = 2;
-		final JLabel labelCarnetID = new JLabel("Bollettario N° ###");
-		labelCarnetID.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		container.add(labelCarnetID, constraint);
 
 		// Footer
 		constraint.gridy++;

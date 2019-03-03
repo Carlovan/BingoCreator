@@ -48,6 +48,10 @@ public class PrintManagerImpl implements PrintManager {
 				return Collections.emptyList();
 			}
 
+			public List<StyledText> getPrices() {
+				return Collections.emptyList();
+			}
+
 			public String getSmallLogoName() {
 				return "";
 			}
@@ -57,6 +61,10 @@ public class PrintManagerImpl implements PrintManager {
 			}
 
 			public String getStemmaName() {
+				return "";
+			}
+
+			public String getTitleLogoName() {
 				return "";
 			}
 		});

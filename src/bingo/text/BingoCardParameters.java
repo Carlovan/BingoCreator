@@ -12,10 +12,14 @@ public interface BingoCardParameters {
 	List<StyledText> getMiddle();
 
 	List<StyledText> getAuthorizations();
+	
+	List<StyledText> getPrices();
 
 	String getSmallLogoName();
 
 	String getBigLogoName();
 
 	String getStemmaName();
+	
+	String getTitleLogoName();
 }

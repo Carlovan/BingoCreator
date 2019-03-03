@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Texts {
 	private static final StyledText[] TITLE = new StyledText[] {
-			new StyledTextImpl("CITTÀ DI\nFORLIMPOPOLI", 15),
 			new StyledTextImpl("in collaborazione con\nl'Ente Folkloristico e\nCulturale Forlimpopolese", 8),
-			new StyledTextImpl("Festeggiamenti", 15), new StyledTextImpl("SEGAVECCHIA", 15) };
+			new StyledTextImpl("col patrocinio del\ncomune di Forlimpopoli", 9f),
+			new StyledTextImpl("TOMBOLA DELLA\nSEGAVECCHIA", 14f) };
 
 	private static final StyledText[] FOOTER = new StyledText[] {
 			new StyledTextImpl("L'utile della manifestazione verrà investito per le attività forlimpopolesi di", 10),
 			new StyledTextImpl("AVIS COMUNALE DI FORLIMPOPOLI", 10) };
 
-	private static final StyledText AUTH_TITLE = new StyledTextImpl("Autorizzazioni", 10);
+	private static final StyledText AUTH_TITLE = new StyledTextImpl("Comunicazioni", 10);
 
 	public static List<StyledText> getTitle() {
 		return Arrays.asList(Texts.TITLE);

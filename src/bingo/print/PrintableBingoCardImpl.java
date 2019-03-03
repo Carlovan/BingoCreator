@@ -28,7 +28,6 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 	public void addPDF(final PDDocument document, final PDPageContentStream stream, final Map<FontType, PDFont> fonts,
 			final PDRectangle size, final BingoCardParameters parameters) throws IOException {
 		final float matrixSize = PrintableBingoCard.MATRIX_WIDTH * (size.getWidth() - PrintableBingoCard.LEFT_MARGIN);
-		final float cardSize = size.getWidth() - matrixSize - PrintableBingoCard.LEFT_MARGIN;
 		final PDFont titleFont = fonts.get(FontType.BOLD);
 		final int topMargin = 15;
 
@@ -39,12 +38,15 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.transform(Matrix.getTranslateInstance(PrintableBingoCard.LEFT_MARGIN, 0));
 
 		// MATRIX
-		stream.beginText();
-
-		stream.newLineAtOffset(0, size.getHeight() - topMargin);
-
 		// Title
+		final PDImageXObject titleLogo = PDImageXObject.createFromFile(parameters.getTitleLogoName(), document);
+		final float titleLogoH = 20;
+		final float titleLogoW = titleLogo.getImage().getWidth() * titleLogoH / titleLogo.getImage().getHeight();
+		final float titleLogoY = size.getHeight() - topMargin - titleLogoH;
+		stream.drawImage(titleLogo, 0, titleLogoY, titleLogoW, titleLogoH);
 		boolean first = true;
+		stream.beginText();
+		stream.newLineAtOffset(0, titleLogoY);
 		for(final StyledText line : Texts.getTitle()) {
 			stream.setLeading(line.getFontSize() + 5);
 			stream.newLine();
@@ -52,7 +54,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 			stream.setLeading(line.getFontSize());
 			for(final String s : line.getText().split("\\n")) {
 				if(!first) stream.newLine();
-				stream.setFont(titleFont, line.getFontSize());
+				stream.setFont(titleFont, line.getFontSize() - 1);
 				stream.showText(s);
 				first = false;
 			}
@@ -87,8 +89,8 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		final int cols = 5;
 		final int rows = 2;
 		float squareSize = 20;
-		float squareMarginH = 4;
-		float squareMarginV = 6;
+		float squarePaddingH = 4;
+		float squarePadingV = 6;
 		float bottom = 100;
 		float left = 0;
 		for(int c = 0; c < cols; c++) {
@@ -99,7 +101,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.closeAndStroke();
 		stream.beginText();
 		stream.setFont(fonts.get(FontType.BOLD), 10);
-		stream.newLineAtOffset(left + squareMarginH, bottom + squareSize + squareMarginV);
+		stream.newLineAtOffset(left + squarePaddingH, bottom + squareSize + squarePadingV);
 		for(int c = 0; c < cols; c++) {
 			for(int r = 0; r < rows; r++) {
 				stream.showText(String.format("%02d", this.getValues().get(c*rows + r)));
@@ -124,8 +126,13 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.transform(Matrix.getTranslateInstance(matrixSize, 0));
 
 		// Title
+//		final PDImageXObject titleLogo = PDImageXObject.createFromFile(parameters.getTitleLogoName(), document);
+//		final float titleLogoH = 20;
+//		final float titleLogoW = titleLogo.getImage().getWidth() * titleLogoH / titleLogo.getImage().getHeight();
+//		final float titleLogoY = size.getHeight() - topMargin - titleLogoH;
+		stream.drawImage(titleLogo, 0, titleLogoY, titleLogoW, titleLogoH);
 		stream.beginText();
-		stream.newLineAtOffset(0, size.getHeight() - topMargin);
+		stream.newLineAtOffset(0, titleLogoY);
 		for(final StyledText line : Texts.getTitle()) {
 			stream.setLeading(line.getFontSize() + 5);
 			stream.newLine();
@@ -136,26 +143,33 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 
 
 		// Images
-		final float logoW = 80;
-		final float logoH = logoW;
-		final float logo2W = 400;
-		final float logo2H = 120;
-		final float logo2Bottom = 200;
-		final PDImageXObject logo = PDImageXObject.createFromFile(parameters.getSmallLogoName(), document);
-		final PDImageXObject logo2 = PDImageXObject.createFromFile(parameters.getBigLogoName(), document);
-		stream.drawImage(logo, cardSize - logoW - topMargin, size.getHeight() - topMargin - logoH, logoW, logoH);
-		stream.drawImage(logo2, 0, logo2Bottom, logo2W, logo2H);
-		stream.addRect(0, logo2Bottom, logo2W, logo2H);
+		final float smallLogoW = 80;
+		final float smallLogoH = smallLogoW; 
+		final float bigLogoW = 400;
+		final float bigLogoH = 120;
+		final float smallLogoX = bigLogoW - smallLogoW;
+		final float smallLogoY = size.getHeight() - topMargin - smallLogoH;
+		final float bigLogoBottom = 200;
+		final float stemmaSize = smallLogoH / 2;
+		final PDImageXObject smallLogo = PDImageXObject.createFromFile(parameters.getSmallLogoName(), document);
+		final PDImageXObject bigLogo = PDImageXObject.createFromFile(parameters.getBigLogoName(), document);
+		final PDImageXObject stemma = PDImageXObject.createFromFile(parameters.getStemmaName(), document);
+		stream.drawImage(smallLogo, smallLogoX, smallLogoY, smallLogoW, smallLogoH);
+		stream.drawImage(bigLogo, 0, bigLogoBottom, bigLogoW, bigLogoH);
+		stream.drawImage(stemma, smallLogoX - stemmaSize - 1, smallLogoY + stemmaSize, stemmaSize, stemmaSize);
+		stream.addRect(0, bigLogoBottom, bigLogoW, bigLogoH);
 		stream.closeAndStroke();
 
 		// Middle
 		final float amountBoxH = 50;
 		final float amountBoxW = 155;
-		stream.addRect(0, logo2Bottom - 10 - amountBoxH, amountBoxW, amountBoxH);
+		final float amountBoxMarginT = 5;
+		final float amountBoxY = bigLogoBottom - amountBoxMarginT - amountBoxH; 
+		stream.addRect(0, amountBoxY, amountBoxW, amountBoxH);
 		stream.closeAndStroke();
 		stream.beginText();
 		stream.setLeading(20);
-		stream.newLineAtOffset(10, logo2Bottom - 30);
+		stream.newLineAtOffset(10, bigLogoBottom - amountBoxMarginT - 20);
 		for (final StyledText t : parameters.getAmount()) {
 			stream.setFont(fonts.get(FontType.REGULAR), t.getFontSize());
 			stream.showText(t.getText());
@@ -164,7 +178,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.endText();
 
 		stream.beginText();
-		stream.newLineAtOffset(amountBoxW + 8, logo2Bottom - 25);
+		stream.newLineAtOffset(amountBoxW + 8, bigLogoBottom - 25);
 		stream.setLeading(16);
 		for (final StyledText t : parameters.getMiddle()) {
 			stream.setFont(titleFont, t.getFontSize());
@@ -175,10 +189,11 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.endText();
 
 		// Numbers
+		final float numbersMarginT = 5;
 		squareSize = 27;
-		squareMarginH = 3;
-		squareMarginV = 7;
-		bottom = 75;
+		squarePaddingH = 3;
+		squarePadingV = 7;
+		bottom = amountBoxY - numbersMarginT - rows*squareSize;
 		left = 0;
 		for(int c = 0; c < cols; c++) {
 			for(int r = 0; r < rows; r++) {
@@ -188,7 +203,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.closeAndStroke();
 		stream.beginText();
 		stream.setFont(fonts.get(FontType.BOLD), 19);
-		stream.newLineAtOffset(left + squareMarginH, bottom + squareSize + squareMarginV);
+		stream.newLineAtOffset(left + squarePaddingH, bottom + squareSize + squarePadingV);
 		for(int c = 0; c < cols; c++) {
 			for(int r = 0; r < rows; r++) {
 				stream.showText(String.format("%02d", this.getValues().get(c*rows + r)));
@@ -198,44 +213,54 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		}
 		stream.endText();
 
-		// Stemma
-		final float stemmaSize = squareSize*rows;
-		final float stemmaLeft = cols*squareSize + left + 10;
-		final PDImageXObject stemma = PDImageXObject.createFromFile(parameters.getStemmaName(), document);
-		stream.drawImage(stemma, stemmaLeft, bottom, stemmaSize, stemmaSize);
-
-		// Authorizations
-		final float authRectW = 195;
-		final float authRectX = stemmaLeft + stemmaSize + 10;
-		stream.addRect(authRectX, bottom, authRectW, stemmaSize);
-		stream.closeAndStroke();
+		// Prices
 		stream.beginText();
-		stream.newLineAtOffset(authRectX + 5, bottom + stemmaSize - 14);
-
-		final StyledText authTitle = Texts.getAuthorizationTitle();
-		stream.setLeading(authTitle.getFontSize() + 1);
-		stream.setFont(fonts.get(FontType.REGULAR), authTitle.getFontSize());
-		stream.showText(authTitle.getText());
-		stream.newLine();
-		for (final StyledText t : parameters.getAuthorizations()) {
-			stream.setFont(fonts.get(FontType.BOLD), t.getFontSize());
-			stream.showText(t.getText());
+		stream.newLineAtOffset(cols*squareSize + left + 10, bottom + rows * squareSize);
+		for(final StyledText t : parameters.getPrices()) {
+			stream.setFont(fonts.get(FontType.REGULAR), t.getFontSize());
+			stream.setLeading(t.getFontSize() + 1);
 			stream.newLine();
+			stream.showText(t.getText());
 		}
 		stream.endText();
 
 		// Boxes
 		boxX = 0;
-		final float boxY = bottom - 10 - boxH;
+		final float boxMarginR = 5;
+		final float boxMarginT = 5;
+		final float boxY = bottom - boxMarginT - boxH;
 		stream.addRect(boxX, boxY, boxW, boxH);
-		stream.addRect(boxX + boxW + 15, boxY, boxW, boxH);
+		stream.addRect(boxX + boxW + boxMarginR, boxY, boxW, boxH);
 		stream.closeAndStroke();
 		stream.beginText();
 		stream.setFont(fonts.get(FontType.REGULAR), 10);
 		stream.newLineAtOffset(boxX + boxMarginH, boxY + boxMarginV);
 		stream.showText("Cartella N° " + String.format("%04d", this.getID()));
-		stream.newLineAtOffset(boxW + 15, 0);
+		stream.newLineAtOffset(boxW + boxMarginR, 0);
 		stream.showText("Bollettario N° " + String.format("%04d", this.getCarnetID()));
+		stream.endText();
+		
+		// Authorizations
+		final float authRectW = 195;
+		final float authRectH = 45; 
+		final float authRectX = boxX + 2*(boxW + boxMarginR);
+		final float authRectY = bottom - boxMarginT - authRectH;
+		stream.addRect(authRectX, authRectY, authRectW, authRectH);
+		stream.closeAndStroke();
+		stream.beginText();
+		stream.newLineAtOffset(authRectX + 5, authRectY + 4);
+		final StyledText authTitle = Texts.getAuthorizationTitle();
+		stream.setLeading(-(authTitle.getFontSize()));
+		final List<StyledText> authorizations = parameters.getAuthorizations();
+		// Printed backwards
+		for (int i = authorizations.size() - 1; i >= 0; i--) {
+			final StyledText t = authorizations.get(i);
+			stream.setFont(fonts.get(FontType.BOLD), t.getFontSize());
+			stream.showText(t.getText());
+			stream.newLine();
+		}
+		stream.setFont(fonts.get(FontType.REGULAR), authTitle.getFontSize());
+		stream.showText(authTitle.getText());
 		stream.endText();
 
 		// Footer
