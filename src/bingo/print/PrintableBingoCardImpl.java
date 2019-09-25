@@ -126,11 +126,12 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.transform(Matrix.getTranslateInstance(matrixSize, 0));
 
 		// Title
-//		final PDImageXObject titleLogo = PDImageXObject.createFromFile(parameters.getTitleLogoName(), document);
-//		final float titleLogoH = 20;
-//		final float titleLogoW = titleLogo.getImage().getWidth() * titleLogoH / titleLogo.getImage().getHeight();
-//		final float titleLogoY = size.getHeight() - topMargin - titleLogoH;
 		stream.drawImage(titleLogo, 0, titleLogoY, titleLogoW, titleLogoH);
+		stream.beginText();
+		stream.newLineAtOffset(titleLogoW + 3, titleLogoY + 3);
+		stream.setFont(titleFont, 14);
+		stream.showText("COMUNALE DI FORLIMPOPOLI");
+		stream.endText();
 		stream.beginText();
 		stream.newLineAtOffset(0, titleLogoY);
 		for(final StyledText line : Texts.getTitle()) {
@@ -150,13 +151,13 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		final float smallLogoX = bigLogoW - smallLogoW;
 		final float smallLogoY = size.getHeight() - topMargin - smallLogoH;
 		final float bigLogoBottom = 200;
-		final float stemmaSize = smallLogoH / 2;
+		final float stemmaSize = smallLogoH / 3;
 		final PDImageXObject smallLogo = PDImageXObject.createFromFile(parameters.getSmallLogoName(), document);
 		final PDImageXObject bigLogo = PDImageXObject.createFromFile(parameters.getBigLogoName(), document);
 		final PDImageXObject stemma = PDImageXObject.createFromFile(parameters.getStemmaName(), document);
 		stream.drawImage(smallLogo, smallLogoX, smallLogoY, smallLogoW, smallLogoH);
 		stream.drawImage(bigLogo, 0, bigLogoBottom, bigLogoW, bigLogoH);
-		stream.drawImage(stemma, smallLogoX - stemmaSize - 1, smallLogoY + stemmaSize, stemmaSize, stemmaSize);
+		stream.drawImage(stemma, smallLogoX - stemmaSize - 2, smallLogoY, stemmaSize, stemmaSize);
 		stream.addRect(0, bigLogoBottom, bigLogoW, bigLogoH);
 		stream.closeAndStroke();
 
