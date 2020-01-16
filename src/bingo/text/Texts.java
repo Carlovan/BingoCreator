@@ -6,7 +6,7 @@ import java.util.List;
 public class Texts {
 	private static final StyledText[] TITLE = new StyledText[] {
 			new StyledTextImpl("in collaborazione con\nl'Ente Folkloristico e\nCulturale Forlimpopolese", 8),
-			new StyledTextImpl("e del\ncomune di Forlimpopoli, organizza", 9f),
+			new StyledTextImpl("e del comune\ndi Forlimpopoli,\nORGANIZZA", 9f),
 			new StyledTextImpl("TOMBOLA DELLA\nSEGAVECCHIA", 14f) };
 
 	private static final StyledText[] FOOTER = new StyledText[] {
