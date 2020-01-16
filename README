@@ -1,0 +1,5 @@
+## Building
+To build, open with Eclipse then File > Export > Runnable JAR. Save it in the root of the project as `Tombola.jar`.  
+Try it with `java -jar Tombola.jar`.  
+Everything is packed inside the project (event fonts): if it can't load it it Eclipse's fault, just expand `bingo.print` package, maybe it help to refresh its memory.  
+Then run the `pack.sh` script to create a nice `.zip` file with the Jar and the images, ready to be sent to the client.
