@@ -130,7 +130,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 		stream.beginText();
 		stream.newLineAtOffset(titleLogoW + 3, titleLogoY + 3);
 		stream.setFont(titleFont, 14);
-		stream.showText("COMUNALE DI FORLIMPOPOLI");
+		stream.showText("COMUNALE DI FORLIMPOPOLI ODV");
 		stream.endText();
 		stream.beginText();
 		stream.newLineAtOffset(0, titleLogoY);
@@ -144,13 +144,13 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 
 
 		// Images
-		final float smallLogoW = 80;
+		final float smallLogoW = 70;
 		final float smallLogoH = smallLogoW; 
 		final float bigLogoW = 400;
 		final float bigLogoH = 120;
 		final float smallLogoX = bigLogoW - smallLogoW;
 		final float smallLogoY = size.getHeight() - topMargin - smallLogoH;
-		final float bigLogoBottom = 200;
+		final float bigLogoBottom = 215;
 		final float stemmaSize = smallLogoH / 3;
 		final PDImageXObject smallLogo = PDImageXObject.createFromFile(parameters.getSmallLogoName(), document);
 		final PDImageXObject bigLogo = PDImageXObject.createFromFile(parameters.getBigLogoName(), document);
@@ -266,7 +266,7 @@ public class PrintableBingoCardImpl implements PrintableBingoCard {
 
 		// Footer
 		stream.beginText();
-		stream.newLineAtOffset(5, 20);
+		stream.newLineAtOffset(5, 35);
 		stream.setLeading(15);
 		for (final StyledText t : Texts.getFooter()) {
 			stream.setFont(fonts.get(FontType.BOLD), t.getFontSize());

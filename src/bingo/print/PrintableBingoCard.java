@@ -13,7 +13,7 @@ import bingo.text.BingoCardParameters;
 
 public interface PrintableBingoCard extends BingoCard {
 	final float MATRIX_WIDTH = 0.25f;
-	final float LEFT_MARGIN = 50;
+	final float LEFT_MARGIN = 30;
 
 	int getPrintNumber();
 
